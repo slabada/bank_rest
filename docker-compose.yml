@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: 'postgres'
+    image: postgres:18.1
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 12345
+    volumes:
+      - bank-data:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  bank-rest:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bank-rest
+    ports:
+      - "8082:8082"
+    environment:
+      - SERVER_PORT=8082
+      - JWT_SECRET=fby5qRB89DHQts6qXQh5l26liUWkGC2G
+      - SPRING_DATASOURCE_PASSWORD=12345
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=admin
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  bank-data:
