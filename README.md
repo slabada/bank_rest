@@ -1,3 +1,1 @@
-OpenAPI generation
-Spring boot (Data, Security)
-Liqubase
+OpenAPI generation, Spring boot (Data, Security), Liqubase, DDD
